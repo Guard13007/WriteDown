@@ -6,7 +6,7 @@ export const fileMenuTemplate = {
     label: 'New',
     accelerator: 'CmdOrCtrl+N',
     click: () => {
-      // BrowserWindow.getFocusedWindow().webContents.dosomething;
+      BrowserWindow.getFocusedWindow().webContents.send('new-file')
     }
   },
   {

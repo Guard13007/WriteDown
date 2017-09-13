@@ -1,6 +1,7 @@
+const ipc = require('electron').ipcRenderer
 const SimpleMDE = require('simplemde')
 
-new SimpleMDE({
+let editor = new SimpleMDE({
   autoDownloadFontAwesome: false,
   // blockStyles: {
   //   bold: "__"   // attempted fix for weird behavior when clicking bold and italics icons, instead led to weirder behavior
@@ -31,20 +32,15 @@ new SimpleMDE({
   toolbar: [
     {
       name: "open",
-      action: function (editor) {
-        const ipc = require('electron').ipcRenderer
+      action: function () {
         ipc.send('open-file-dialog')
-        ipc.on('selected-file', function (event, data) {
-          editor.value(data)
-        })
       },
       className: "fa fa-folder-open-o",
       title: "Open File (Ctrl-O)"
     },
     {
       name: "save",
-      action: function (editor) {
-        const ipc = require('electron').ipcRenderer
+      action: function () {
         ipc.send('save-file-dialog', editor.value())
       },
       className: "fa fa-floppy-o",
@@ -52,7 +48,19 @@ new SimpleMDE({
     },
     "|", "bold", "italic", "horizontal-rule", "|", "heading", "heading-bigger", "heading-smaller", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "code", "|", "side-by-side", "preview", "|", "guide"
   ],
-}).toggleFullScreen()
+})
+
+console.log(editor)
+
+ipc.on('new-file', function() {
+  editor.value('')
+})
+
+ipc.on('selected-file', function (event, data) {
+  editor.value(data)
+})
+
+editor.toggleFullScreen(editor)   // this will function, but also trigger a console error
 
 // // Small helpers you might want to keep
 // import './helpers/context_menu.js';
