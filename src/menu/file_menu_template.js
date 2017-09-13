@@ -1,6 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 
-export const fileMenu = {
+export const fileMenuTemplate = {
   label: 'File',
   submenu: [{
     label: 'New',
@@ -22,7 +22,7 @@ export const fileMenu = {
     click: () => {
       // TODO
     }
-  }
+  },
   {
     label: 'Quit',
     accelerator: 'CmdOrCtrl+Q',

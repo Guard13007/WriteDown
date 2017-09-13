@@ -6,9 +6,9 @@
 import path from 'path';
 import url from 'url';
 import { app, Menu } from 'electron';
-import { fileMenu } from './menu/file'
-import { developmentMenu } from './menu/development';
-import { editMenu } from './menu/edit';
+import { fileMenuTemplate } from './menu/file_menu_template'
+import { devMenuTemplate } from './menu/dev_menu_template';
+import { editMenuTemplate } from './menu/edit_menu_template';
 import createWindow from './helpers/window';
 
 // Special module holding environment variables which you declared
@@ -41,9 +41,9 @@ ipc.on('save-file-dialog', function (event, data) {
 })
 
 const setApplicationMenu = () => {
-  const menus = [fileMenu, editMenu];
+  const menus = [fileMenuTemplate, editMenuTemplate];
   if (env.name !== 'production') {
-    menus.push(developmentMenu);
+    menus.push(devMenuTemplate);
   }
   Menu.setApplicationMenu(Menu.buildFromTemplate(menus));
 };
