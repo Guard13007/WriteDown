@@ -6,18 +6,44 @@
 import path from 'path';
 import url from 'url';
 import { app, Menu } from 'electron';
-import { devMenuTemplate } from './menu/dev_menu_template';
-import { editMenuTemplate } from './menu/edit_menu_template';
+import { fileMenu } from './menu/file'
+import { developmentMenu } from './menu/development';
+import { editMenu } from './menu/edit';
 import createWindow from './helpers/window';
 
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
 import env from './env';
 
+const fs = require('fs')
+const ipc = require('electron').ipcMain
+const dialog = require('electron').dialog
+
+ipc.on('open-file-dialog', function (event) {
+  dialog.showOpenDialog({
+    properties: ['openFile']
+  }, function (file) {
+    if (file) {
+      let err, data = fs.readFileSync(file.toString())
+      if (!err) {
+        event.sender.send('selected-file', data.toString())
+      }
+    }
+  })
+})
+
+ipc.on('save-file-dialog', function (event, data) {
+  dialog.showSaveDialog({}, function (path) {
+    if (path) {
+      let err = fs.writeFileSync(path, data)
+    }
+  })
+})
+
 const setApplicationMenu = () => {
-  const menus = [editMenuTemplate];
+  const menus = [fileMenu, editMenu];
   if (env.name !== 'production') {
-    menus.push(devMenuTemplate);
+    menus.push(developmentMenu);
   }
   Menu.setApplicationMenu(Menu.buildFromTemplate(menus));
 };

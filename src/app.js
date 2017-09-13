@@ -22,10 +22,36 @@ new SimpleMDE({
     codeSyntaxHighlighting: true
   },
   shortcuts: {
+    open: "Ctrl-O",
+    // quit: "Ctrl-Q",
+    save: "Ctrl-S",
     toggleFullScreen: null   // editor is always full-screen
   },
   tabSize: 4,
-  toolbar: ["bold", "italic", "horizontal-rule", "|", "heading", "heading-bigger", "heading-smaller", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "code", "|", "side-by-side", "preview", "|", "guide"],
+  toolbar: [
+    {
+      name: "open",
+      action: function (editor) {
+        const ipc = require('electron').ipcRenderer
+        ipc.send('open-file-dialog')
+        ipc.on('selected-file', function (event, data) {
+          editor.value(data)
+        })
+      },
+      className: "fa fa-folder-open-o",
+      title: "Open File (Ctrl-O)"
+    },
+    {
+      name: "save",
+      action: function (editor) {
+        const ipc = require('electron').ipcRenderer
+        ipc.send('save-file-dialog', editor.value())
+      },
+      className: "fa fa-floppy-o",
+      title: "Save File (Ctrl-S)"
+    },
+    "|", "bold", "italic", "horizontal-rule", "|", "heading", "heading-bigger", "heading-smaller", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "code", "|", "side-by-side", "preview", "|", "guide"
+  ],
 }).toggleFullScreen()
 
 // // Small helpers you might want to keep
