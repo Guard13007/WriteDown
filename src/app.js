@@ -23,6 +23,7 @@ let editor = new SimpleMDE({
     codeSyntaxHighlighting: true
   },
   shortcuts: {
+    new: "Ctrl-N",
     open: "Ctrl-O",
     // quit: "Ctrl-Q",
     save: "Ctrl-S",
@@ -30,6 +31,14 @@ let editor = new SimpleMDE({
   },
   tabSize: 4,
   toolbar: [
+    {
+      name: "new",
+      action: function () {
+        editor.value('')
+      },
+      className: "fa fa-file-o",
+      title: "New File (Ctrl-N)"
+    },
     {
       name: "open",
       action: function () {
@@ -58,6 +67,10 @@ ipc.on('new-file', function() {
 
 ipc.on('selected-file', function (event, data) {
   editor.value(data)
+})
+
+ipc.on('get-file-text', function (event) {
+  event.sender.send('file-text', editor.value())
 })
 
 editor.toggleFullScreen(editor)   // this will function, but also trigger a console error

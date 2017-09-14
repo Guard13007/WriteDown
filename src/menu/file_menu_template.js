@@ -1,5 +1,9 @@
 import { app, BrowserWindow } from 'electron';
 
+const fs = require('fs')
+const ipc = require('electron').ipcMain
+const dialog = require('electron').dialog
+
 export const fileMenuTemplate = {
   label: 'File',
   submenu: [{
@@ -11,16 +15,25 @@ export const fileMenuTemplate = {
   },
   {
     label: 'Open...',
-    // accelerator: 'CmdOrCtrl+O',
+    accelerator: 'CmdOrCtrl+O',
     click: () => {
-      // BrowserWindow.getFocusedWindow().toggleDevTools();
+      dialog.showOpenDialog({
+        properties: ['openFile']
+      }, function (file) {
+        if (file) {
+          let err, data = fs.readFileSync(file.toString())
+          if (!err) {
+            BrowserWindow.getFocusedWindow().webContents.send('selected-file', data.toString())
+          }
+        }
+      })
     }
   },
   {
     label: 'Save',
-    // accelerator: 'CmdOrCtrl+S',
+    accelerator: 'CmdOrCtrl+S',
     click: () => {
-      // TODO
+      BrowserWindow.getFocusedWindow().webContents.send('get-file-text')
     }
   },
   {
@@ -31,3 +44,11 @@ export const fileMenuTemplate = {
     }
   }],
 };
+
+ipc.on('file-text', function(event, text) {
+  dialog.showSaveDialog({}, function(path) {
+    if (path) {
+      let err = fs.writeFileSync(path, text)
+    }
+  })
+})
