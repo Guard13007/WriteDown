@@ -59,8 +59,6 @@ let editor = new SimpleMDE({
   ],
 })
 
-console.log(editor)
-
 ipc.on('new-file', function() {
   editor.value('')
 })
@@ -73,7 +71,10 @@ ipc.on('get-file-text', function (event) {
   event.sender.send('file-text', editor.value())
 })
 
-editor.toggleFullScreen(editor)   // this will function, but also trigger a console error
+try {
+  editor.toggleFullScreen(editor)   // this will function, but also trigger a console error
+}
+catch(err) { } // we don't care about this error
 
 // // Small helpers you might want to keep
 // import './helpers/context_menu.js';
