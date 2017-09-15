@@ -5,6 +5,7 @@ let tab = tabGroup.addTab({
     title: "WriteDown", // should be the file name or something
     src: "./page.html",
     visible: true,
+    active: true,
     webviewAttributes: {
       nodeintegration: true
     },
